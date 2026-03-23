@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  </head>
+  <body>
+    <a href="./index.html"  >Back to home page</a>
+    <h1>CART</h1>
+
+    <div class="container" >
+ <table class="table">
+  <tbody id="cartRender1"></tbody>
+    </table>
+    <div id="amountDetails"></div>
+    </div>
+     
+
+    <script>
+      function cartRender(){
+      cartFromLocal1 = JSON.parse(localStorage.getItem('Cart81'))
+        document.getElementById('cartRender1').innerHTML = cartFromLocal1.map((pc,i)=>`
+       
+    <tr>
+      <th scope="row">${i+1}</th>
+      <td style="width:120px; text-align:left">${pc.product_name}</td>
+      <td>${pc.product_price}</td>
+      <td>
+        <button class="btn btn-success">-</button>
+        ${pc.quantity_inCart}
+        <button class="btn btn-success">+</button>
+        </td>
+      <td> <button class='btn btn-danger' onclick='RemoveFromCart(${pc.id})'>X</button></td>
+    </tr>
+        `).join('')
+
+
+        // below elements still render after remve all items 
+        
+if(cartFromLocal1.length>0){
+      deliveryCharges = 20
+      discount = 10
+      totalAmtCartItem =  cartFromLocal1.reduce((sum, p)=> p.product_price * p.quantity_inCart + sum , 0)
+
+
+      // [{id:1, product_name:mobile,product_price:5,quantityInCart:5},
+      //   {id:2, product_name:tv,product_price:10,quantityInCart:1},
+      //   {id:3, product_name:induction,product_price:2,quantityInCart:2}
+      // ]
+
+      console.log(totalAmtCartItem,"totalAmtCartItem")
+      totalAmount = totalAmtCartItem + deliveryCharges - (((totalAmtCartItem) *10 ) /100 )
+      document.getElementById('amountDetails').innerHTML = `
+                    <div class='text-end'>
+                     <p> <b>DeliveryCharges : ${deliveryCharges}</b></p>
+                     <p> <b>Discount : ${discount}</b></p>
+                      <p><b>Total Amount : ${totalAmount} <del>${totalAmtCartItem+deliveryCharges}</del></b></p>
+                      </div>
+      `
+                    }
+      }
+
+function RemoveFromCart(ID){
+      cartFromLocalForDEL = JSON.parse(localStorage.getItem('Cart81'))
+      ind = cartFromLocalForDEL.findIndex((p)=>p.id == ID)
+      if(ind == -1){
+        alert('Cant remove ')
+      }
+      cartFromLocalForDEL.splice(ind, 1)
+
+
+      localStorage.setItem('Cart81',JSON.stringify(cartFromLocalForDEL))
+      cartRender()
+}
+
+
+
+cartRender()
+
+    </script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  </body>
+</html>
